@@ -3,7 +3,7 @@
 # Create Logs folder if not exists
 mkdir -p "$HOME/Logs"
 
-# Create logs
+# Redirect all output to a timestamped log file
 logfile="$HOME/Logs/sorter-$(date +%Y-%m-%d).log"
 exec >> "$logfile" 2>&1
 
@@ -91,33 +91,30 @@ extension_map[""]="Other"
 if [[ -d ~/Downloads ]]; then
     cd ~/Downloads || exit 1
 else
-    echo "~/Downloads doesn't exists!"
+    echo "~/Downloads doesn't exist!"
     exit 1
 fi
 
-# Pobieranie listy plikow (bez katalogow), nawet jesli sa spacje
+# Fetching list of files (excluding directories), even if filenames contain spaces
 mapfile -t files < <(find . -maxdepth 1 -type f | sed 's|^\./||')
 
 file_number=0
 file="${files[$file_number]}"
 
 while [[ "$file" ]]; do
-    echo "Plik to $file"
+    echo "Processing file: $file"
     ext="${file##*.}"
     ext="${ext,,}"
 
     if [[ -z "${extension_map[$ext]}" ]]; then
-        echo "Brak folderu dla .$ext -> skip"
+        echo "No folder mapped for .$ext -> skipping"
     else
         folder="${extension_map[$ext]}"
         
-        echo "Przenosze $file do katalogu: $folder"
-        echo "Rozszerzenie: .$ext"
-        echo "Katalog docleowy: $folder"
-        #if [[ -z "$folder" ]]; then
-        #    echo "Brak przypisanego folderu dla .$ext -> skip"
-        #    continue
-        #fi
+        echo "Moving $file to directory: $folder"
+        echo "Extension: .$ext"
+        echo "Target directory: $folder"
+
         # Create folder if not exists
         mkdir -p "$HOME/$folder"
 
@@ -130,4 +127,4 @@ while [[ "$file" ]]; do
     file="${files[$file_number]}"
 done
 
-echo "Brak plikow"
+echo "Done processing files."
