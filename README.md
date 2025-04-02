@@ -58,7 +58,7 @@ Unknown file types remain in place
 
 ---
 ## 🕒 Automation (optional)
-You can schedule AutoSorter to run once daily using `cron` or `systemd` timers.
+You can schedule AutoSorter to run once daily using `cron` or `systemd timers`.
 Here’s an example using a systemd user timer (recommended on NixOS):
 
 `~/.config/systemd/user/autosorter.service`
