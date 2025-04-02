@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+logs_path="$HOME/Logs"
+
 # Create Logs folder if not exists
-mkdir -p "$HOME/Logs"
+mkdir -p "$logs_path"
 
 # Redirect all output to a timestamped log file
-logfile="$HOME/Logs/sorter-$(date +%Y-%m-%d).log"
+logfile="$logs_path/sorter-$(date +%Y-%m-%d).log"
 exec >> "$logfile" 2>&1
 
 declare -A extension_map
@@ -119,7 +121,11 @@ while [[ "$file" ]]; do
         mkdir -p "$HOME/$folder"
 
         # Move file
-        mv "$file" "$HOME/$folder/"
+        if mv "$file" "$HOME/$folder/"; then
+            echo "Moved successfully"
+        else
+            echo "Failed to move $file!"
+        fi
     fi
 
     # Next file
@@ -127,4 +133,8 @@ while [[ "$file" ]]; do
     file="${files[$file_number]}"
 done
 
-echo "Done processing files."
+
+# Automatically delete old sorter logs (older than 3 days)
+find "$logs_path" -name "sorter-*.log" -mtime +3 -exec rm {} \;
+
+echo "$(date +'%F %T') All files processed."
